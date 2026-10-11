@@ -2,6 +2,7 @@
 # Copyright (C) 2026 tigercodes-dev
 
 BUILD_TYPE ?= release
+INSTALL_DIR ?= /usr/local/bin
 
 export BUILD_DIR ?= build
 export CXX := g++
@@ -23,7 +24,7 @@ SOURCES := $(shell find src -type f -name '*.cpp')
 HEADERS := $(shell find src -type f -name '*.hpp')
 OBJECTS := $(patsubst src/%.cpp, build/%.o, $(SOURCES))
 
-.PHONY: all tdisk clean
+.PHONY: all tdisk install clean
 .SILENT:
 
 all: tdisk
@@ -40,6 +41,10 @@ build/%.o: src/%.cpp $(HEADERS)
 	mkdir -p $(@D)
 	echo "  CXX     $@"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+install: build/tdisk
+	echo "Installing to $(INSTALL_DIR)."
+	install -m 755 $^ $(INSTALL_DIR)
 
 clean:
 	rm -rf build/*
